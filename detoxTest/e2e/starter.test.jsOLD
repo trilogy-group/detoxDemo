@@ -1,0 +1,23 @@
+describe('First UI Test', () => {
+  beforeAll(async () => {
+    await device.launchApp();
+  });
+
+  beforeEach(async () => {
+    await device.reloadReactNative();
+  });
+
+  it('should show Step One', async () => {
+    await expect(element(by.text('Step One'))).toBeVisible();
+  });
+
+  it('should show Debug', async () => {
+    // await element(by.id('hello_button')).tap();
+    await expect(element(by.text('Debug'))).toBeVisible();
+  });
+
+  it('should show Learn more', async () => {
+    // await element(by.id('world_button')).tap();
+    await expect(element(by.text('Learn More'))).toBeVisible();
+  });
+});

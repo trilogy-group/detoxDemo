@@ -1,0 +1,21 @@
+import {by, device, element, expect} from 'detox';
+
+describe('DetoxTest suite - 1', () => {
+  beforeAll(async () => {
+    await device.relaunchApp();
+  });
+
+  it('should show Step One', async () => {
+    await expect(element(by.text('Step One'))).toBeVisible();
+  });
+
+  it('should show Debug', async () => {
+    // await element(by.id('hello_button')).tap();
+    await expect(element(by.text('Debug'))).toBeVisible();
+  });
+
+  // it('should show Learn more', async () => {
+  //   // await element(by.id('world_button')).tap();
+  //   await expect(element(by.text('Learn More'))).toBeVisible();
+  // });
+});
