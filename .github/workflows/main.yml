@@ -12,6 +12,7 @@ jobs:
         run: yarn
 
       - name: Build Android Release
+        working-directory: ./
         run: cd android && ./gradlew assembleRelease
 
       - name: Upload Artifact
