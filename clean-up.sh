@@ -23,7 +23,7 @@ yarn cache clean
 
 echo -e "\n${BOLD_YELLOW}---- Cleaning iOS workspace ----${NC}\n"
 
-xcodebuild clean -workspace ios/ARMobile.xcworkspace -scheme ARMobile
+xcodebuild clean -workspace ios/detoxTest.xcworkspace -scheme detoxTest
 
 echo -e "\n${BOLD_YELLOW}---- Cleaning Android build folders ----${NC}\n"
 
