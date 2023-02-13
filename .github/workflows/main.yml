@@ -12,7 +12,7 @@ jobs:
         run: yarn
 
       - name: Build Android Release
-        working-directory: ./detoxTest
+        working-directory: ./detoxTest/android
         run: cd android && ./gradlew assembleRelease
 
       - name: Upload Artifact
