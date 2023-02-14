@@ -8,11 +8,11 @@ jobs:
     steps:
       - name: Download Android Emulator Image
         run: |
-          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install "system-images;android-29;google_apis;x86"
+          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install "system-images;android-31;google_apis;x86"
           echo "Yes" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
-          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name emu --device "Nexus 5X" -k 'system-images;android-29;google_apis;x86'
+          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name Pixel_API_31_AOSP --device "pixel" -k 'system-images;android-31;google_apis;x86'
           $ANDROID_HOME/emulator/emulator -list-avds
-        
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -23,7 +23,6 @@ jobs:
         with:
           mobilePath: ./
 
-          
       - name: Setup Android NDK
         uses: nttld/setup-ndk@v1.2.0
         with:
@@ -31,8 +30,6 @@ jobs:
 
       - name: Build Android Release
         run: cd android && ./gradlew assembleRelease
-
-     
 
       - name: Install dependencies
         run: yarn
