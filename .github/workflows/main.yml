@@ -8,9 +8,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: yarn
-
+    - name: Client dependencies
+      uses: ./.github/workflows/dependencies
+      with:
+        mobilePath: ./client
+    
+    - name: Setup Android NDK
+      uses: nttld/setup-ndk@v1.2.0
+      with:
+        ndk-version: r21e
       - name: Build Android Release
         run: cd android && ./gradlew assembleRelease
 
