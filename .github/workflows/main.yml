@@ -27,7 +27,7 @@ jobs:
       - name: Download Android Emulator Image
         run: |
           echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --install "system-images;android-31;default;x86_64"
-          echo "Yes" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
+          echo "y" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
           echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name Pixel_API_31_AOSP --device pixel -k 'system-images;android-31;default;x86_64"
           $ANDROID_HOME/emulator/emulator -list-avds
 
