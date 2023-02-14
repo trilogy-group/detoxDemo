@@ -5,7 +5,6 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 120
     steps:
       - name: Download Android Emulator Image
         run: |        
@@ -13,7 +12,6 @@ jobs:
           echo "Yes" | $ANDROID_HOME/tools/bin/sdkmanager --licenses
           echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name Pixel_API_31_AOSP --device "pixel" -k 'system-images;android-30;google_apis;x86'
           $ANDROID_HOME/emulator/emulator -list-avds
-          $ANDROID_HOME/platform-tools/adb -s * emu kill
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -49,10 +47,11 @@ jobs:
         run: detox build -c android.emu.release
 
       - name: Android Emulator
-        timeout-minutes: 10
+        timeout-minutes: 40
         continue-on-error: true
         run: |
           echo "Starting emulator"
+          $ANDROID_HOME/platform-tools/adb -s * emu kill
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_API_31_AOSP -no-audio -no-snapshot -no-window &
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
           $ANDROID_HOME/platform-tools/adb devices
