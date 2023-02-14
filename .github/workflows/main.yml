@@ -14,7 +14,7 @@ jobs:
     - name: Client dependencies
       uses: ./.github/workflows/dependencies
       with:
-        mobilePath: ./client
+        mobilePath: client
     
     - name: Setup Android NDK
       uses: nttld/setup-ndk@v1.2.0
