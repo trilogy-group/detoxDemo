@@ -63,7 +63,7 @@ module.exports = {
       headless: Boolean(process.env.CI),
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
-        avdName: 'Nexus 5X',
+        avdName: 'Nexus5X',
       },
       utilBinaryPaths: ['./cache/test-butler-app.apk'],
     },
