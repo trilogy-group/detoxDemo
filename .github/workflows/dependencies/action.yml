@@ -12,6 +12,10 @@ runs:
       run: |
         yarn global add react-native-cli
 
+    - name: Install Detox globally
+      shell: bash
+      run: |
+        yarn global add detox-cli
     - name: Install client packages
       working-directory: ${{ inputs.mobilePath }}
       shell: bash
