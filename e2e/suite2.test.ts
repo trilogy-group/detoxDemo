@@ -1,12 +1,24 @@
 import {by, device, element, expect} from 'detox';
 
-describe('DetoxTest (goodbye)', () => {
+describe('DetoxTest suite - 2', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
   });
 
-  it('should show goodbye screen after tap', async () => {
-    // await element(by.text('Style')).tap();
+  it('should show Step One', async () => {
     await expect(element(by.text('Step One'))).toBeVisible();
+    console.log('***************    Step One      ***********');
+  });
+
+  it('should show Debug', async () => {
+    // await element(by.id('hello_button')).tap();
+    await expect(element(by.text('Debug'))).toBeVisible();
+    console.log('***************    Debug      ***********');
+  });
+
+  it('should show Learn more', async () => {
+    // await element(by.id('world_button')).tap();
+    await expect(element(by.text('Learn More'))).toBeVisible();
+    console.log('***************    Learn More       ***********');
   });
 });

@@ -7,11 +7,13 @@ describe('DetoxTest suite - 1', () => {
 
   it('should show Step One', async () => {
     await expect(element(by.text('Step One'))).toBeVisible();
+    console.log('***************    Step One       ***********');
   });
 
   it('should show Debug', async () => {
     // await element(by.id('hello_button')).tap();
     await expect(element(by.text('Debug'))).toBeVisible();
+    console.log('***************    Debug       ***********');
   });
 
   // it('should show Learn more', async () => {
