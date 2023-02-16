@@ -21,9 +21,6 @@ jobs:
         with:
           ndk-version: r21e
 
-      - name: Build Android Release
-        run: cd android && ./gradlew assembleRelease
-
       - name: Install dependencies
         run: yarn
 
@@ -63,12 +60,11 @@ jobs:
           AVD_PATH: /Users/runner/.android/avd/Pixel_API_31_AOSP.avd
 
       - name: Android Emulator
-        timeout-minutes: 10
+        timeout-minutes: 20
         continue-on-error: true
         run: |
           echo "Starting emulator"
-          nohup $ANDROID_HOME/emulator/emulator -verbose -no-audio -no-snapshot -no-window -gpu swiftshader_indirect @Pixel_API_31_AOSP &
-          # nohup $ANDROID_HOME/emulator/emulator -verbose -no-audio -no-snapshot -no-window -partition-size 2048 @Pixel_API_31_AOSP &
+          nohup $ANDROID_HOME/emulator/emulator -verbose -no-audio -no-snapshot -no-window -partition-size 2048 @Pixel_API_31_AOSP &
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
           $ANDROID_HOME/platform-tools/adb devices
           echo "Emulator started"
