@@ -42,13 +42,13 @@ jobs:
       - name: Download Android Emulator Image
         run: |
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install $PACKAGE
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_API_31_AOSP --device "pixel_5" --package $PACKAGE --sdcard 256M
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_API_31_AOSP --device "pixel" --package $PACKAGE --sdcard 256M
           # adb start-server
           $ANDROID_HOME/emulator/emulator -list-avds
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list device
           $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
         env:
-          PACKAGE: 'system-images;android-29;default;x86_64'
+          PACKAGE: 'system-images;android-30;default;x86_64'
 
       - name: Change Android Emulator settings
         run: |
