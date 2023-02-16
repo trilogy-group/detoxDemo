@@ -1,8 +1,8 @@
 import {by, device, element, expect} from 'detox';
 
 describe('DetoxTest suite - 2', () => {
-  beforeEach(async () => {
-    await device.reloadReactNative();
+  beforeAll(async () => {
+    await device.relaunchApp();
   });
 
   it('should show Step One', async () => {
