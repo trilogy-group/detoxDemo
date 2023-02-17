@@ -34,7 +34,7 @@ jobs:
           path: android/app/build/outputs/apk/release/app-release.apk
 
       - name: Android Detox
-        run: detox build -c android.emu.release
+        run: detox build -c android.emu.debug
 
       - name: Download Android Emulator Image
         run: |
@@ -70,7 +70,7 @@ jobs:
           echo "Emulator started"
 
       - name: Android Detox
-        run: yarn start & detox test -c android.emu.release
+        run: yarn start & detox test -c android.emu.debug
 
       - name: Kill Or Shutdown Android Emulator
         run: |
