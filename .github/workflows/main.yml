@@ -24,6 +24,32 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Cache Pods
+        uses: actions/cache@v1
+        id: podcache
+        with:
+          path: ios/Pods
+          key: pods-${{ hashFiles('**/Podfile.lock') }}
+
+      - name: Update Pods
+        run: |
+          gem update cocoapods xcodeproj
+          cd ios && pod install && cd ..
+      - name: Install iOS detox components
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+      
+      - name: iOS Detox Build
+        run: detox build -c ios.sim.debug
+      
+      - name: iOS Detox Test
+        run: detox test -c ios.sim.debug
+      
       - name: Build Android Release
         run: cd android && ./gradlew assembleRelease
 
