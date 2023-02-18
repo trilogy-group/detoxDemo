@@ -17,8 +17,7 @@
   "dependencies": {
     "react": "17.0.2",
     "react-native": "0.67.5",
-    "tslib": "^2.0.3",
-    "react-native-bluetooth-classic": "https://github.com/philpettican/react-native-bluetooth-classic.git"
+    "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
