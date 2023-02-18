@@ -5,6 +5,11 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    timeout-minutes: 120
+
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -15,6 +20,10 @@ jobs:
         uses: ./.github/workflows/dependencies
         with:
           mobilePath: ./
+          
+      - name: Rebuild detox
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: yarn detox clean-framework-cache && yarn detox build-framework-cache
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -31,7 +40,7 @@ jobs:
         run: |
           gem update cocoapods xcodeproj
           cd ios && pod install && cd ..
-          
+     
       - name: Install iOS detox components
         run: |
           brew tap wix/brew
