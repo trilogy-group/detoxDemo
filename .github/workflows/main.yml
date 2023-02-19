@@ -21,21 +21,8 @@ jobs:
         with:
           mobilePath: ./
 
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
-
-      - name: Cache Pods
-        uses: actions/cache@v1
-        id: podcache
-        with:
-          path: ios/Pods
-          key: pods-${{ hashFiles('**/Podfile.lock') }}
-
-      - name: Update Pods
-        run: |
-          gem update cocoapods xcodeproj
-          cd ios && pod install && cd ..
+      - name: Compile iOS Code base
+        run: ./clean-up.sh
 
       - name: Install iOS detox components
         run: |
