@@ -21,19 +21,35 @@ jobs:
         with:
           mobilePath: ./
 
-      - name: Compile iOS Code base
-        run: ./clean-up.sh
+      - name: Install dependencies
+        run: yarn
 
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Cache Pods
+        uses: actions/cache@v1
+        id: podcache
+        with:
+          path: ios/Pods
+          key: pods-${{ hashFiles('**/Podfile.lock') }}
+
+      - name: Update Pods
+        run: |
+          gem update cocoapods xcodeproj
+          cd ios && pod install && cd ..
+          
       - name: Install iOS detox components
         run: |
           brew tap wix/brew
           brew install applesimutils
-
+      
       - name: iOS Detox Build
         run: detox build -c ios.sim.debug
-
+      
       - name: iOS Detox Test
-        run: detox test -c ios.sim.debug --debug-synchronization 200
+        run: detox test -c ios.sim.debug --debug-synchronization 500
 
       - name: Setup Android NDK
         uses: nttld/setup-ndk@v1.2.0
