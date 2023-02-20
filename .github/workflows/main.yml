@@ -4,33 +4,25 @@ on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: macos-latest
-    timeout-minutes: 15
+    runs-on: macos-12
+    timeout-minutes: 120
 
     env:
       DEVELOPER_DIR: /Applications/Xcode_14.0.1.app
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
 
-      - name: Node
-        uses: actions/setup-node@v3
+      - name: Client dependencies
+        uses: ./.github/workflows/dependencies
         with:
-          node-version: 16
+          mobilePath: ./
 
-      - name: Cache node modules
-        uses: actions/cache@v1
-        id: cache
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Rebuild detox
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: yarn detox clean-framework-cache && yarn detox build-framework-cache
+      - name: Install dependencies
+        run: yarn
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -47,7 +39,79 @@ jobs:
         run: |
           gem update cocoapods xcodeproj
           cd ios && pod install && cd ..
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
-      - run: yarn detox build -c ios.sim.debug --loglevel trace
-      - run: yarn detox build -c ios.sim.debug --cleanup --debug-synchronization 200
+          
+      - name: Install iOS detox components
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+      
+      - name: iOS Detox Build
+        run: detox build -c ios.sim.debug
+      
+      - name: iOS Detox Test
+        run: detox test -c ios.sim.debug --debug-synchronization 500
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1.2.0
+        with:
+          ndk-version: r21e
+
+      - name: Build Android Release
+        run: cd android && ./gradlew assembleRelease
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: release
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Android Detox
+        run: detox build -c android.emu.debug --loglevel trace
+
+      - name: Download Android Emulator Image
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install $PACKAGE
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_API_31_AOSP --device "pixel" --package $PACKAGE --sdcard 256M
+          # adb start-server
+          $ANDROID_HOME/emulator/emulator -list-avds
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list device
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
+        env:
+          PACKAGE: 'system-images;android-30;default;x86_64'
+
+      - name: Change Android Emulator settings
+        run: |
+          echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
+          sudo mkdir -p /root/.android && touch /root/.android/repositories.cfg
+          echo "vm.heapSize=576" >> $AVD_PATH/config.ini
+          echo "hw.ramSize=2048" >> $AVD_PATH/config.ini
+          echo "disk.dataPartition.size=2048m" >> $AVD_PATH/config.ini
+          grep "size" $AVD_PATH/config.ini
+        env:
+          AVD_NAME: Pixel_API_31_AOSP
+          AVD_PATH: /Users/runner/.android/avd/Pixel_API_31_AOSP.avd
+
+      - name: Android Emulator
+        timeout-minutes: 20
+        continue-on-error: true
+        run: |
+          echo "Starting emulator"
+          nohup $ANDROID_HOME/emulator/emulator -verbose -no-window -no-audio -gpu swiftshader_indirect @Pixel_API_31_AOSP &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          $ANDROID_HOME/platform-tools/adb devices
+          echo "Emulator started"
+
+      - name: Android Detox
+        run: yarn start & detox test -c android.emu.debug --loglevel trace
+
+      - name: Kill Or Shutdown Android Emulator
+        run: |
+          killall -9 qemu-system-x86_64
+          echo "Emulator CLOSED"
+
+      - name: Store Detox artifacts on test failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: detox-artifacts
+          path: artifacts # Default path for Detox artifacts
