@@ -49,5 +49,5 @@ jobs:
           cd ios && pod install && cd ..
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: yarn detox build -c ios.sim.debug
+      - run: yarn detox build -c ios.sim.debug --loglevel trace
       - run: yarn detox build -c ios.sim.debug --cleanup --debug-synchronization 200
